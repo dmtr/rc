@@ -22,9 +22,10 @@ let python_highlight_all = 1
 "Включаем 256 цветов в терминале, мы ведь работаем из иксов?
 "Нужно во многих терминалах, например в gnome-terminal
 "set t_Co=256
-let g:miniBufExplMapWindowNavArrows = 1 
+"let g:miniBufExplMapWindowNavArrows = 1 
 
 let pymode_folding=0  
+let g:pyflakes_use_quickfix=0 
 
 "set tabstop=4
 "set shiftwidth=4
@@ -134,16 +135,18 @@ endif
 set background=dark 
 colors peaksea
 
-map <F2> :FufTaggedFile<CR>
+map <F2> \be
+map <F3> \t
+map <F4> :FufTaggedFile<CR>
+map <F8> [M
+map <F9> ]M
+map <F12> :call TranslateWord()<CR>
 
 function! TranslateWord()
+
    let s:dict  = "dict"
    let s:phrase  = expand("<cword>")
    let s:tmpfile = tempname()
    silent execute "!" . s:dict . " " . s:phrase . " > " . s:tmpfile
    execute "botright sp " . s:tmpfile
 endfunction
-
-map <F9> :call TranslateWord()<CR>
-
-
