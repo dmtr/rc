@@ -103,6 +103,15 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
 fi
 
 LD_LIBRARY_PATH=/usr/local/pgsql/lib:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavcodec:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavdevice:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavfilter:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavformat:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavutil:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libpostproc:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libswresample:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libswscale:$LD_LIBRARY_PATH
+LD_LIBRARY_PATH=/home/dmtr/libx264/x264/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 
 PATH=$HOME/bin:$PATH
@@ -173,3 +182,9 @@ export HISTIGNORE="HISTIGNORE=ls:ps:top:deactivate:pwd:mc"
 export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
 #export PATH=$PATH:$JAVA_HOME/bin
 export CLASSPATH=.:/home/dmtr/java/:/var/lib/tomcat6/common/postgresql-8.4-703.jdbc4.jar:
+
+
+export FFMPEG_DATADIR=/usr/share/ffmpeg
+
+. /home/dmtr/z/z.sh
+
