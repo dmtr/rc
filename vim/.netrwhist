@@ -1,0 +1,5 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_1='/home/dmtr/work/DA/python/mobile/etc/testing'
+let g:netrw_dirhist_2='/home/dmtr/work/DA/python/mobile/etc'
+let g:netrw_dirhist_3='/home/dmtr/work/DA/python/mobile'
