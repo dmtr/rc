@@ -150,3 +150,23 @@ function! TranslateWord()
    silent execute "!" . s:dict . " " . s:phrase . " > " . s:tmpfile
    execute "botright sp " . s:tmpfile
 endfunction
+
+
+if version >= 700
+    set history=64
+    set undolevels=128
+    set undodir=~/.vim/undodir/
+    set undofile
+    set undolevels=1000
+    set undoreload=10000
+endif
+
+
+function! ChangeBuf(cmd)
+    if (&modified && &modifiable)
+        execute ":w"
+    endif
+    execute a:cmd
+endfunction
+nnoremap <silent> <C-n> :call ChangeBuf(":bn")<CR>
+nnoremap <silent> <C-p> :call ChangeBuf(":bp")<CR>
