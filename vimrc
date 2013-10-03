@@ -6,6 +6,12 @@ set incsearch
 set showmatch
 set nu
 set noswapfile
+set laststatus=2
+
+
+filetype off
+call pathogen#infect()
+call pathogen#helptags()
 
 syntax on "Включить подсветку синтаксиса
 "Вырубаем режим совместимости с VI:
@@ -24,8 +30,6 @@ let python_highlight_all = 1
 "set t_Co=256
 "let g:miniBufExplMapWindowNavArrows = 1 
 
-let pymode_folding=0  
-let g:pyflakes_use_quickfix=0 
 
 "set tabstop=4
 "set shiftwidth=4
@@ -33,17 +37,23 @@ let g:pyflakes_use_quickfix=0
 "set expandtab "Ставим табы пробелами
 "set softtabstop=4 "4 пробела в табе
 
+let pymode_folding=0  
+let g:pyflakes_use_quickfix=0 
+let g:pymode_lint_ignore = "E501"
+let g:pymode_lint_checker = "pyflakes,pep8"
+
+
 function Set_python_settings()
     "Настройки табов для Python, согласно рекоммендациям
-    "set tabstop=4
-    "set shiftwidth=4
-    "set smarttab
-    "set expandtab "Ставим табы пробелами
-    "set softtabstop=4 "4 пробела в табе
-    "set smartindent
+    set tabstop=4
+    set shiftwidth=4
+    set smarttab
+    set expandtab "Ставим табы пробелами
+    set softtabstop=4 "4 пробела в табе
+    set smartindent
     "set tags=tags;/
     set tags=tags.da,python.tags,twisted.tags,tags
-    set path+=~/work/DA/python/**
+    set path+=~/work/da/python/**
 endfunction
 
 function Unset_python_settings()
@@ -71,9 +81,6 @@ autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 
-"Вызываем SnippletsEmu по ctrl-j
-"вместо tab по умолчанию (на табе автокомплит)
-"let g:snippetsEmu_key = "<C-j>"
 
 function Set_cpp_settings()
     set expandtab
@@ -135,21 +142,12 @@ endif
 set background=dark 
 colors peaksea
 
-map <F2> \be
-map <F3> \t
-map <F4> :FufTaggedFile<CR>
+map <F5> :UniteWithCursorWord grep:.<cr>
+map <F2> :Unite buffer<CR>
+map <F3> :TlistToggle<CR>
 map <F8> [M
 map <F9> ]M
-map <F12> :call TranslateWord()<CR>
-
-function! TranslateWord()
-
-   let s:dict  = "dict"
-   let s:phrase  = expand("<cword>")
-   let s:tmpfile = tempname()
-   silent execute "!" . s:dict . " " . s:phrase . " > " . s:tmpfile
-   execute "botright sp " . s:tmpfile
-endfunction
+nnoremap <C-p> :UniteWithInput file_rec<cr>
 
 
 if version >= 700
@@ -162,11 +160,4 @@ if version >= 700
 endif
 
 
-function! ChangeBuf(cmd)
-    if (&modified && &modifiable)
-        execute ":w"
-    endif
-    execute a:cmd
-endfunction
-nnoremap <silent> <C-n> :call ChangeBuf(":bn")<CR>
-nnoremap <silent> <C-p> :call ChangeBuf(":bp")<CR>
+let g:airline_theme="base16"
