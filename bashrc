@@ -5,20 +5,24 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# don't put duplicate lines in the history. See bash(1) for more options
-# ... or force ignoredups and ignorespace
-HISTCONTROL=ignoredups:ignorespace
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
 
 # append to the history file, don't overwrite it
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
-HISTFILESIZE=5000
+HISTFILESIZE=2000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
 
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -82,6 +86,8 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
+alias tmux='tmux -2'
+
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -102,28 +108,6 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-LD_LIBRARY_PATH=/usr/local/pgsql/lib:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavcodec:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavdevice:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavfilter:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavformat:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libavutil:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libpostproc:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libswresample:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/ffmpeg/libswscale:$LD_LIBRARY_PATH
-LD_LIBRARY_PATH=/home/dmtr/libx264/x264/lib:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH
-
-PATH=$HOME/bin:$PATH
-PATH=$HOME/pypy/pypy-1.8/bin:$PATH
-PATH=/usr/local/pgsql/bin:$PATH
-export PATH
-
-
-export PIP_RESPECT_VIRTUALENV=true
-export WORKON_HOME=/home/dmtr/.virtualenvs
-export PIP_VIRTUALENV_BASE=$WORKON_HOME
-source /usr/local/bin/virtualenvwrapper.sh
 
 cyan=`tput setaf 6`
 c_red=`tput setaf 1`
@@ -167,24 +151,39 @@ branch_color ()
 
 PS1='\[$(branch_color)\]$(parse_git_branch)\[${c_sgr0}\][\u@\h \W]$ '
 
-
-export PAGER=~/bin/vimpager 
-alias less=$PAGER
-
-
-
 PROMPT_COMMAND='history -a'
 shopt -s cdspell
 export HISTIGNORE="HISTIGNORE=ls:ps:top:deactivate:pwd:mc"
 
+export PAGER=~/bin/vimpager 
+alias less=$PAGER
 
-#export JAVA_HOME=/usr/lib/jvm/jdk1.6.0_29
-export JAVA_HOME=/usr/lib/jvm/java-6-openjdk
-#export PATH=$PATH:$JAVA_HOME/bin
-export CLASSPATH=.:/home/dmtr/java/:/var/lib/tomcat6/common/postgresql-8.4-703.jdbc4.jar:
+PATH=$HOME/bin:$PATH
+
+export PIP_RESPECT_VIRTUALENV=true
+export PIP_VIRTUALENV_BASE=$WORKON_HOME
+export WORKON_HOME=/home/dmtr/.virtualenvs
+source /usr/local/bin/virtualenvwrapper.sh
 
 
-export FFMPEG_DATADIR=/usr/share/ffmpeg
+export EDITOR=vim
 
-. /home/dmtr/z/z.sh
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/dmtr/work/nginx_mod_hls/libs/lib/
 
+export GOROOT=$HOME/go
+export GOPATH=$HOME/gocode
+PATH=$GOPATH/bin:$PATH
+PATH=$GOROOT/bin:$PATH
+
+# pip bash completion start
+_pip_completion()
+{
+    COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
+                   COMP_CWORD=$COMP_CWORD \
+                   PIP_AUTO_COMPLETE=1 $1 ) )
+}
+complete -o default -F _pip_completion pip
+# pip bash completion end
+
+
+alias gdiff='git difftool --tool=vimdiff --no-prompt'
