@@ -3,6 +3,8 @@ set fileencodings=utf-8,cp1251
 set hidden
 set hlsearch
 set incsearch
+set ignorecase
+set smartcase
 set showmatch
 set nu
 set noswapfile
@@ -38,9 +40,19 @@ let python_highlight_all = 1
 "set softtabstop=4 "4 пробела в табе
 
 let pymode_folding=0  
-let g:pyflakes_use_quickfix=0 
+let g:pyflakes_use_quickfix=1 
 let g:pymode_lint_ignore = "E501"
 let g:pymode_lint_checker = "pyflakes,pep8"
+let g:pymode_rope_goto_definition_bind = "<C-J>"
+let g:pymode_virtualenv = 1
+let g:pymode_virtualenv_path = $VIRTUAL_ENV
+let g:pymode_options_colorcolumn = 0
+let g:pymode_rope_completion_bind = '<C-S>'
+let g:pymode_rope_autoimport = 1
+
+if $PYTHON == 'python3'
+	let g:pymode_python = 'python3'
+endif
 
 
 function Set_python_settings()
@@ -129,8 +141,8 @@ autocmd BufWritePre *.py normal m`:%s/\s\+$//e ``
 "В .py файлах включаем умные отступы после ключевых слов
 autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
 
-autocmd BufNewFile,BufEnter *.{cpp,cc,h} call Set_cpp_settings()
-autocmd BufLeave *.{cpp,cc,h} call Unset_cpp_settings()
+autocmd BufNewFile,BufEnter *.{cpp,cc,h,c} call Set_cpp_settings()
+autocmd BufLeave *.{cpp,cc,h,c} call Unset_cpp_settings()
 
 autocmd BufNewFile,BufEnter *.{php} call Set_php_settings()
 autocmd BufLeave *.{php} call Unset_php_settings()
@@ -142,12 +154,14 @@ endif
 set background=dark 
 colors peaksea
 
-map <F5> :UniteWithCursorWord grep:.<cr>
+map <S-s> :UniteWithCursorWord grep:.<cr>
 map <F2> :Unite buffer<CR>
 map <F3> :TlistToggle<CR>
-map <F8> [M
-map <F9> ]M
-nnoremap <C-p> :UniteWithInput file_rec<cr>
+map <C-p> [M
+map <C-n> ]M
+map <S-c> vaC
+map <S-m> vaM
+nnoremap <C-f> :UniteWithInput file_rec<cr>
 
 
 if version >= 700
@@ -161,3 +175,34 @@ endif
 
 
 let g:airline_theme="base16"
+
+" go settings
+"au FileType go nmap gd <Plug>(go-def)
+
+nnoremap <leader>s *<C-O>:Ack!<CR>
+
+let Tlist_Ctags_Cmd="/usr/local/bin/ctags"
+
+" javascript plugins
+let g:used_javascript_libs = 'jquery,angularjs'
+
+
+let g:S = 0  "result in global variable S
+function! Sum(number)
+  let g:S = g:S + a:number
+  return a:number
+endfunction
+
+
+" allows cursor change in tmux mode
+if exists('$TMUX')
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
+
+let g:haskellmode_completion_ghc = 1
+autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
+let g:syntastic_auto_loc_list = 1
