@@ -24,12 +24,10 @@ filetype on
 filetype plugin on
 "Автоотступ
 set autoindent
-"set copyindent
+set copyindent
 "Подсвечиваем все что можно подсвечивать
 let python_highlight_all = 1
-"Включаем 256 цветов в терминале, мы ведь работаем из иксов?
 "Нужно во многих терминалах, например в gnome-terminal
-"set t_Co=256
 "let g:miniBufExplMapWindowNavArrows = 1 
 
 
@@ -39,20 +37,34 @@ let python_highlight_all = 1
 "set expandtab "Ставим табы пробелами
 "set softtabstop=4 "4 пробела в табе
 
+let mapleader = ","
+
 let pymode_folding=0  
-let g:pyflakes_use_quickfix=1 
+let g:pymode_indent = 1
+" let g:pyflakes_use_quickfix=0 
 let g:pymode_lint_ignore = "E501"
 let g:pymode_lint_checker = "pyflakes,pep8"
 let g:pymode_rope_goto_definition_bind = "<C-J>"
 let g:pymode_virtualenv = 1
 let g:pymode_virtualenv_path = $VIRTUAL_ENV
 let g:pymode_options_colorcolumn = 0
-let g:pymode_rope_completion_bind = '<C-S>'
-let g:pymode_rope_autoimport = 1
+let g:pymode_rope_lookup_project = 1
+let g:pymode_rope_completion_bind = '<C-TAB>'
+let g:pymode_rope_autoimport = 0
+let g:pymode_rope_regenerate_on_write = 0
+let g:pymode_trim_whitespaces = 0
+let g:pymode_options_max_line_length = 120
+let g:pymode_options_colorcolumn = 1
+let g:pymode_lint = 1
 
 if $PYTHON == 'python3'
 	let g:pymode_python = 'python3'
 endif
+
+let g:tagbar_left = 1
+let g:tagbar_width = 30
+let g:tagbar_autofocus = 1
+let g:tagbar_sort = 0
 
 
 function Set_python_settings()
@@ -130,7 +142,7 @@ function Unset_cpp_settings()
     set tags+=./
 endfunction
 
-" " automatically open and close the popup menu / preview window
+" automatically open and close the popup menu / preview window
 au CursorMovedI,InsertLeave * if pumvisible() == 0|silent! pclose|endif
 set completeopt=menuone,menu,longest,preview
 
@@ -150,19 +162,31 @@ autocmd BufLeave *.{php} call Unset_php_settings()
 if ! has("gui_running") 
  set t_Co=256 
 endif 
+
 " feel free to choose :set background=light for a different style 
-set background=dark 
-colors peaksea
+set background=dark
+colorscheme kalisi
+
+if executable('ag')
+    let g:unite_source_grep_command='ag'
+    let g:unite_source_grep_default_opts= '--vimgrep --hidden --ignore ''.ropeproject'' --ignore ''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''migrations'''
+endif
 
 map <S-s> :UniteWithCursorWord grep:.<cr>
 map <F2> :Unite buffer<CR>
-map <F3> :TlistToggle<CR>
+map <F3> :TagbarToggle<CR>
 map <C-p> [M
 map <C-n> ]M
 map <S-c> vaC
 map <S-m> vaM
-nnoremap <C-f> :UniteWithInput file_rec<cr>
+nnoremap <C-f> :UniteWithInput file_rec/async<cr>
 
+nnoremap <leader>ug :UniteWithInput grep:.<cr>
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gc :Gcommit<CR>
+nnoremap <leader>gd :Gdiff<CR>
+nnoremap <leader>gw :Gwrite<CR><CR>
+nnoremap <leader>gp :Ggrep<Space>
 
 if version >= 700
     set history=64
@@ -174,7 +198,6 @@ if version >= 700
 endif
 
 
-let g:airline_theme="base16"
 
 " go settings
 "au FileType go nmap gd <Plug>(go-def)
@@ -205,4 +228,31 @@ endif
 
 let g:haskellmode_completion_ghc = 1
 autocmd FileType haskell setlocal omnifunc=necoghc#omnifunc
-let g:syntastic_auto_loc_list = 1
+
+let b:syntastic_mode = 'passive'
+let g:syntastic_auto_jump = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_loc_list_height = 2
+
+
+let g:vrc_auto_format_uhex = 1
+
+"Go settings
+autocmd BufNewFile,BufRead *.go setlocal tabstop=4 shiftwidth=4
+" run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#cmd#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
+autocmd FileType go nmap <leader>g :<C-u>call <SID>build_go_files()<CR>
+
+let g:go_fmt_command = "goimports"
+let g:go_metalinter_autosave = 1
+let g:go_auto_type_info = 1
+let g:go_auto_sameids = 1
